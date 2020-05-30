@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Servlet Application</title>
+
+<h1> Servlet Project!</h1>
+<style>
+body {
+  background-color: lightblue;
+}
+
+h1 {
+  color: navy;
+  margin-left: 20px;
+}
+ul {
+  list-style-type: none;
+}
+</style>
+ <script>
+  function fetchData(){
+	 var xmlhttp = new XMLHttpRequest();
+		console.log(xmlhttp);
+		var count = document.getElementById("itemCount").value;
+		console.log(count)
+		if(count>20){			
+			document.getElementById("items").innerHTML ="";
+			alert("Enter count less than or equal to 20");
+			return false;
+		}
+		//ajax call to fetch items
+		xmlhttp.onreadystatechange = function() {
+	        if (xmlhttp.readyState == XMLHttpRequest.DONE) {   
+	           if (xmlhttp.status == 200) {
+	        	   console.log(xmlhttp);
+	        	   var data = JSON.parse(xmlhttp.responseText);
+	        	  
+	        	   var htmlString = "";
+	               for (var i = 0; i < data.length; i++) {
+	                   var item = data[i];
+	                    htmlString=htmlString+ "<div><ul><li>ID:"+item.id+"</li><li>Name:"+item.name+"</li><li>Department:"
+	                   +item.department+"</li></ul></div><br/>";
+	               }
+	               
+	               document.getElementById("items").innerHTML = htmlString;//xmlhttp.responseText;
+	           }
+	           else if (xmlhttp.status == 400) {
+	              alert('There was an error 400');
+	           }
+	           else {
+	               alert('something else other than 200 was returned');
+	           }
+	        }
+	    };
+
+	    xmlhttp.open("GET", "itemServlet?limit="+count, true);
+	    xmlhttp.send();
+	
+	 
+ }
+  window.onload=function(){
+  document.getElementById("itemCount")
+  .addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+      document.getElementById("fetch").click();
+  }
+});
+  }
+   </script>
+</head>
+<body>
+
+    Enter Number of Items: <input type="text"  id="itemCount" maxlength="2" size="2">
+    <button type="submit" onclick="fetchData()" id="fetch">Submit</button>
+    <br/>
+<div id="items"></div>
+</body>
+</html>
